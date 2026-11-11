@@ -67,7 +67,21 @@ def parsear_idn(respuesta):
 
 
 # -----Pruebas------
+# 1. Caso ideal (4 campos)
 assert parsear_idn("OWON,ADS3202,254,V1.0") is not None
+
+# 2. Menos de 4 campos
 assert parsear_idn("OWON,ADS3202,254") is None
+
+# 3. Cadena vacía
 assert parsear_idn("") is None
+
+# 4. Respuesta de error del instrumento (1 campo sin comas)
+assert parsear_idn("ERROR: comando desconocido") is None
+
+# 5. Campos con espacios de más alrededor
+resultado_espacios = parsear_idn("  OWON  ,  ADS3202 , 254   , V1.0 ")
+assert resultado_espacios["fabricante"] == "OWON"
+assert resultado_espacios["modelo"] == "ADS3202"
+
 print("pruebas OK")
