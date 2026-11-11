@@ -49,37 +49,6 @@ def validar(comando):
     # Si pasó todas las validaciones, está bien formado
     return None
 
-
-def es_consulta(comando):
-    return comando.endswith("?")
-
-
-def validar(comando):
-    if not comando:
-        return "No puede estar vacío"
-
-    if not (comando.startswith(":") or comando.startswith("*")):
-        return "Empieza con : o con *"
-
-    if "  " in comando:
-        return "No hay dos espacios seguidos"
-
-    if comando.count("?") > 1:
-        return "Hay a lo sumo un ?"
-
-    if "?" in comando and not comando.endswith("?"):
-        return "El ? va al final"
-
-    if es_consulta(comando):
-        if " " in comando:
-            return "Una consulta no lleva argumento"
-    else:
-        if comando.count(" ") != 1:
-            return "Una orden lleva un solo argumento"
-
-    return None
-
-
 # ==========================================
 # BLOQUE DE PRUEBAS (ASSERTS)
 # ==========================================
