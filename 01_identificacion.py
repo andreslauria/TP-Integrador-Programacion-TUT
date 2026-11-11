@@ -16,6 +16,31 @@ devuelve el instrumento cuando no entiende.
 import socket
 
 
+def query_scpi(port, command="*IDN?"):
+    """Envía un comando SCPI por TCP/IP y devuelve la respuesta en texto."""
+    host = "127.0.0.1"  # localhost
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(2.0)
+        try:
+            s.connect((host, port))
+            cmd_with_term = f"{command}\n"
+            s.sendall(cmd_with_term.encode("utf-8"))
+
+            data = s.recv(1024)
+            return data.decode("utf-8").strip()
+
+        except ConnectionRefusedError:
+            print(f"[-] Error: Simulador en puerto {port} no está corriendo.")
+            return None
+        except socket.timeout:
+            print(f"[-] Error: Timeout en el puerto {port}.")
+            return None
+        except Exception as e:
+            print(f"[-] Error inesperado en puerto {port}: {e}")
+            return None
+
+
 def parsear_idn(respuesta):
     # Si la respuesta está vacía o no es un string, no sirve
     if not respuesta or not isinstance(respuesta, str):
