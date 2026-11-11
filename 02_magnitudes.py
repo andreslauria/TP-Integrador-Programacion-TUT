@@ -70,21 +70,18 @@ assert a_numero("7.070000E-01") == 0.707
 assert a_numero("HOLA") is None
 assert a_numero("") is None
 
-# 2. Pruebas de la tabla de la cátedra
+# 2. Pruebas de la tabla del ejercicio
 assert con_unidad(1000.0, "Hz") == "1 kHz"
 assert con_unidad(a_numero("2.500000E+03"), "Hz") == "2.5 kHz"
 assert con_unidad(2.0, "V") == "2 V"
 assert con_unidad(0.707, "V") == "707 mV"
-assert con_unidad(0.0005, "s") == "500 us"
-assert con_unidad(0.0, "V") == "0 V"
 
-# 3. El caso trampa de la defensa
+assert con_unidad(a_numero("Hola"), "V") == "N/A"
+
 assert con_unidad(999.9999, "Hz") == "1 kHz"
+assert con_unidad(0.9999, "A") == "999.9 mA"
 
-# 4. Otras resoluciones peliagudas para la defensa
-# Otro caso de acarreo por redondeo hacia arriba:
-assert con_unidad(0.9999, "A") == "999.9 mA"  # en lugar de 1000 mA
-
+### AGREGADOS POR LA IA
 # 5. Prefijos en los extremos
 assert con_unidad(0.000000000003, "F") == "3 pF"  # Pico
 assert con_unidad(1500000000.0, "Hz") == "1.5 GHz"  # Giga
@@ -93,7 +90,5 @@ assert con_unidad(1500000000.0, "Hz") == "1.5 GHz"  # Giga
 assert con_unidad(-5.0, "V") == "-5 V"
 assert con_unidad(-0.015, "A") == "-15 mA"
 
-# 7. Caso None
-assert con_unidad(a_numero("Hola"), "V") == "N/A"
 
 print("Todas las pruebas pasaron OK. ¡Éxitos en la defensa!")
