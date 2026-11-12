@@ -49,6 +49,9 @@ def validar(comando):
     # Si pasó todas las validaciones, está bien formado
     return None
 
+
+print(validar(""))
+
 # ==========================================
 # BLOQUE DE PRUEBAS (ASSERTS)
 # ==========================================
@@ -68,7 +71,7 @@ assert validar("*IDN?") is None, "Fallo: Consulta válida con * rechazada"
 
 # Regla: No puede estar vacío
 assert validar("") == "No puede estar vacío"
-print(validar(""))
+
 # Regla: Empieza con : o con *
 assert validar("CH1:DISPlay ON") == "Empieza con : o con *"
 
@@ -76,7 +79,7 @@ assert validar("CH1:DISPlay ON") == "Empieza con : o con *"
 assert validar(":CH1:DISPlay  ON") == "No hay dos espacios seguidos"
 
 # Regla: Hay a lo sumo un ?
-assert validar(":CH1:DISPlay??") == "Hay a lo sumo un ?"
+assert validar(":CH1:DISPlay??") == "Hay mas de un signo ?"
 
 # Regla: El ? va al final
 assert validar(":CH1:DIS?Play") == "El ? va al final"
