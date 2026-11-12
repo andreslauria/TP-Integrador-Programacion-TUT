@@ -2,7 +2,7 @@ from pathlib import Path  # Permite construir la ruta al archivo del ejercicio 3
 from runpy import run_path  # Permite ejecutar ese archivo y obtener su función validar.
 
 
-validar = run_path(str(Path(__file__).with_name("3 ordene y consultas.py")))["validar"]  # Reutiliza el validador del ejercicio 3.
+validar = run_path(str(Path(__file__).with_name("03_comandos.py")))["validar"]  # Reutiliza el validador del ejercicio 3.
 
 
 def comandos_de_canal(canal, display, acoplamiento, sonda, escala):  # Define la función con los datos para configurar el canal.
