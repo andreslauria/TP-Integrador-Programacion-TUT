@@ -12,7 +12,6 @@ Que Contesto:
 El uso de \*IDN? como el "Hola Mundo" (o ping) de la instrumentación es una excelente práctica. Si esa consulta pasa, tienes garantizada la capa física y de transporte.
 Aquí tienes la función. Para resolver la discrepancia de que el osciloscopio devuelve 4 campos y el multímetro 5 (generalmente porque reporta la versión de hardware y de software por separado), la función agrupa todos los campos a partir del cuarto dentro de la clave version. De esta forma, conservas toda la información manteniendo exactamente las cuatro claves que pediste. (el codigo)
 
-
 Ejercicio_2:
 
 Prompt:
@@ -76,10 +75,107 @@ Recordá que programamos a_numero(texto) para que devuelva None si el texto est�
 Si haces con_unidad(a_numero("TEXTO_ROTO"), "V"), le estarías pasando un None a la función con_unidad. Cuando con_unidad intente hacer matemáticas con ese None (como abs(None) o buscar si es mayor a cero), el programa va a crashear con un TypeError.
 
 Qué cambiaste:
-Se corrige con un 
-``` python
+Se corrige con un
+
+```python
 if valor is None:
-        return "N/A" 
+        return "N/A"
 ```
-Prompt: 
+
+Prompt:
 Genera algunas pruebas adicionales utilizando assert
+
+###Ejercicio 6###
+Prompt:
+tengo un programa llamado instrumento_virtual.py corriendo en segundo plano que simula un osciloscopio ADS3202 y el multímetro XDM1041, en la direccion 127.0.0.1 en los puertos 5555 y 5556 respectivamentete.
+
+Acá aparece la red. Es menos de lo que parece: SCPI por LAN es texto plano sobre una
+conexión TCP, una línea por comando, y socket viene con Python.
+Escribí una clase Instrumento con tres métodos:
+Método Qué hace
+enviar(comando) manda una orden y no espera nada — es ENVIAR
+preguntar(comando) manda una consulta y devuelve la respuesta — es QUERY
+cerrar() cierra la conexión
+Al crear el objeto se le pasan la dirección y el puerto, con 127.0.0.1 y 5555 como valores por defecto.
+
+Cada comando se manda terminado en un salto de línea ( "\n" ). Cada respuesta viene terminada de la misma forma. Ese salto de línea es el que marca dónde termina un mensaje y empieza el siguiente; sin él, el instrumento se queda esperando para siempre.
+Prueba mínima: con el instrumento virtual corriendo, preguntar("*IDN?") tiene que devolver OWON,ADS3202,25470803,V1.2.0 . Y esa respuesta, pasada por parsear_idn del ejercicio 1, tiene que dar un diccionario con modelo igual a ADS3202 .
+
+IMPORTANTE: HACERLO CON PROGRAMACION FUNCIONAL NO POO.
+
+Que Contesto:
+
+Para resolver este ejercicio utilizando un enfoque de programación funcional (sin clases ni objetos de la conexión), en lugar de instanciar un objeto con sus métodos, vamos a definir funciones puras o de primer orden que reciban el socket (la conexión) como argumento.
+Como el archivo 01_identificacion.py comienza con un número, se debe utilizar importlib para importarlo correctamente en el script.
+Aquí tienes el código de solución:
+
+```python
+
+import socket
+import importlib
+
+# Función para abrir la conexión y devolver el socket
+def conectar(host="127.0.0.1", puerto=5555):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((host, puerto))
+    return sock
+# Función para enviar un comando sin esperar respuesta
+def enviar(sock, comando):
+    # Aseguramos que termine con salto de línea
+    mensaje = f"{comando.strip()}\n"
+    sock.sendall(mensaje.encode('utf-8'))
+# Función para enviar una consulta y leer la respuesta
+def preguntar(sock, comando):
+    enviar(sock, comando)
+    # Recibimos datos hasta encontrar el salto de línea "\n"
+    respuesta = b""
+    while b"\n" not in respuesta:
+        chunk = sock.recv(1024)
+        if not chunk: # Si se corta la conexión
+            break
+        respuesta += chunk
+        
+    return respuesta.decode('utf-8').strip()
+# Función para cerrar la conexión del socket
+def cerrar(sock):
+    sock.close()
+# ==========================================
+# Script de prueba (Ejecución principal)
+# ==========================================
+if __name__ == "__main__":
+    # 1. Importar la función parsear_idn del ejercicio 1
+    modulo_idn = importlib.import_module("01_identificacion")
+    parsear_idn = modulo_idn.parsear_idn
+
+    # 2. Conectar al instrumento (Osciloscopio en puerto 5555 por defecto)
+    print("Conectando al instrumento en 127.0.0.1:5555...")
+    try:
+        conexion_osciloscopio = conectar()
+        
+        # 3. Mandar consulta (QUERY)
+        respuesta_cruda = preguntar(conexion_osciloscopio, "*IDN?")
+        print(f"Respuesta cruda recibida: {respuesta_cruda}")
+        
+        # 4. Parsear con la función del ejercicio anterior
+        datos_parseados = parsear_idn(respuesta_cruda)
+        print(f"Diccionario parseado: {datos_parseados}")
+        
+        # 5. Comprobación de éxito
+        if datos_parseados and datos_parseados.get("modelo") == "ADS3202":
+            print("\n¡Prueba EXITOSA! El modelo parseado es ADS3202.")
+        else:
+            print("\nError: El diccionario devuelto no contiene el modelo esperado.")
+            
+    except ConnectionRefusedError:
+        print("Error: No se pudo conectar. Asegúrate de que el instrumento virtual (instrumento_virtual.py) esté corriendo.")
+    finally:
+        # 6. Siempre cerramos la conexión al terminar
+        if 'conexion_osciloscopio' in locals():
+            cerrar(conexion_osciloscopio)
+            print("Conexión cerrada.")
+```
+
+Notas sobre la implementación:
+- El estado de la conexión se mantiene en la variable conexion_osciloscopio y viaja pasándose explícitamente a enviar(), preguntar() y cerrar(). De este modo se evita la Programación Orientada a Objetos.
+- En preguntar(sock, comando), implementé un bucle while b"\n" not in respuesta que lee iterativamente el buffer del socket de red hasta detectar el carácter de nueva línea garantizando que no se pierda información ni se quede esperando indefinidamente si el mensaje es corto o largo.
+- Para probar el multímetro, solo tienes que llamar a conectar(puerto=5556) en el bloque principal.
