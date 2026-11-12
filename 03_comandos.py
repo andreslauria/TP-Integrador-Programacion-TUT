@@ -24,7 +24,7 @@ def validar(comando):
 
     # 4. Hay a lo sumo un ?
     if comando.count("?") > 1:
-        return "Hay a lo sumo un ?"
+        return "Hay mas de un signo ?"
 
     # 5. El ? va al final
     # Si existe un '?', obligatoriamente debe estar en la última posición
@@ -68,7 +68,7 @@ assert validar("*IDN?") is None, "Fallo: Consulta válida con * rechazada"
 
 # Regla: No puede estar vacío
 assert validar("") == "No puede estar vacío"
-
+print(validar(""))
 # Regla: Empieza con : o con *
 assert validar("CH1:DISPlay ON") == "Empieza con : o con *"
 
