@@ -53,7 +53,7 @@ class Instrumento:
 osciloscopio = Instrumento()  # Creo un objeto (instancia de la clase Instrumento)
 osciloscopio.conectar()
 respuesta_pars = osciloscopio.preguntar("*IDN?")
-print(respuesta_pars[modelo])
+print(f"El modelo del osciloscopio es: {respuesta_pars["modelo"]}")
 osciloscopio.cerrar()
 
 mutlimetro = Instrumento(
@@ -61,5 +61,5 @@ mutlimetro = Instrumento(
 )  # Creo un objeto (instancia de la clase Instrumento) con otro puerto
 mutlimetro.conectar()
 respuesta_pars = mutlimetro.preguntar("*IDN?")
-print(respuesta_pars[modelo])
+print(f"El modelo del multimetro es: {respuesta_pars["modelo"]}")
 mutlimetro.cerrar()
