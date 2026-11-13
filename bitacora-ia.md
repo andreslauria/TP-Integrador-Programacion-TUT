@@ -212,3 +212,74 @@ Sin embargo, para asegurar que el servidor entienda el fin del comando, la mejor
 ```
 
 ### Ejercicio 6###
+
+
+
+
+### Ejercicio 7###
+
+*Prompt*:
+
+
+
+
+-Se deben contemplar valores incorrectos, valores negativos y casos especiales, como cuando el valor teórico es cero.
+
+-También se solicitaron pruebas utilizando `assert`, incluyendo un caso de señal cuadrada para comprobar que el valor medido no coincida con el teórico de una señal senoidal.
+
+*Qué contestó*:
+
+
+-Durante el desarrollo se utilizó inicialmente una operación matemática para calcular la raíz cuadrada sin importar una biblioteca adicional.
+
+-Se solicitó modificar el uso de `**` para mejorar la implementación del cálculo de la raíz cuadrada y evitar utilizar directamente el operador de potencia.
+
+-Se modificó la implementación incorporando `import math` y utilizando `math.sqrt(2)` para calcular la raíz cuadrada de 2.
+
+De esta manera, el cálculo quedó expresado mediante una función específica de la biblioteca matemática de Python, mejorando la claridad de la operación.
+
+-Se agregaron pruebas con `assert` para verificar los cálculos, las tolerancias y los casos en los que las mediciones no coinciden.
+
+
+
+### Ejercicio 8###
+
+
+*Prompt*:
+
+
+El archivo `mediciones.log` proporcionado por la cátedra contiene registros reales de una sesión de medición.
+
+Cada línea contiene seis campos separados por espacios:
+
+- Fecha.
+- Hora.
+- Equipo.
+- Canal.
+- Magnitud.
+- Valor medido.
+
+
+Se deben contemplar las siguientes validaciones:
+
+- Ignorar líneas vacías y comentarios que comiencen con `#`.
+- Rechazar líneas que no tengan exactamente seis campos.
+- Rechazar horarios imposibles, por ejemplo `25:61:00`.
+- Aceptar únicamente los canales `CH1` y `CH2`.
+- Aceptar únicamente las magnitudes `FREQ`, `PKPK` y `CYCRMS`.
+- Rechazar valores que no puedan convertirse a números.
+
+Como condición especial, una de las líneas válidas utiliza tabulaciones en lugar de espacios para separar los campos.
+
+*Qué contestó*:
+
+
+Para separar los campos se utilizó `linea.split()` sin argumentos. Esto permite reconocer tanto espacios como tabulaciones, evitando descartar una línea válida del archivo.
+
+También se implementó `leer_log()` para recorrer el archivo utilizando `enumerate()`, identificar el número de cada línea, agrupar las mediciones mediante una clave compuesta por equipo, canal y magnitud, y almacenar los registros rechazados junto con el motivo correspondiente.
+
+Para las pruebas se utilizaron instrucciones `assert` y el archivo real `mediciones.log` proporcionado por la cátedra, verificando que se obtengan las series y los registros rechazados esperados.
+
+
+
+### Ejercicio 9###
