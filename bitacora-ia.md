@@ -283,3 +283,58 @@ Para las pruebas se utilizaron instrucciones `assert` y el archivo real `medicio
 
 
 ### Ejercicio 9###
+
+Escribí:
+
+a) resumen(valores) , que devuelve un diccionario con n , minimo , maximo , prome‐
+dio y desvio , o None si la lista está vacía; y b) fuera_de_rango(valores, minimo, maximo) ,
+que devuelve las posiciones de los valores que se salen del rango. Los dos extremos del
+rango cuentan como adentro.
+
+
+El desvío estándar de la muestra se calcula dividiendo por `n - 1` :
+
+`desvio = raiz( suma((v - promedio)^2) / (n - 1) )`
+
+Con un solo valor eso dividiría por cero, así que en ese caso el desvío es 0.0 .
+
+Control con la serie de verdad: corriendo resumen sobre la serie de frecuencias de
+CH1 que sale de mediciones.log , el promedio tiene que caer a menos del 0,5 % de
+1000 Hz y el desvío tiene que ser menor que 5 Hz. Si no da eso, el error está en el
+ejercicio 8, no en éste.
+
+_Que Contesto_:
+
+CODIGO `09_estadistica.py
+
+Implementé `resumen(valores)` y `fuera_de_rango(valores, minimo, maximo)` en `09_estadistica.py`, con pruebas para listas vacías, singleton, desvío muestral y extremos inclusivos.
+
+Validé la sintaxis y el control con `mediciones.log`: 21 frecuencias de CH1, promedio **999,258 Hz** y desvío **2,740 Hz**. Las pruebas pasaron.
+
+_que cambiaste_:
+
+incorporo la biblioteca MATH y vi que puso:
+
+from math import sqrt
+
+
+def resumen(valores):
+    n = len(valores)
+
+    if n == 0:
+        return None
+
+    promedio = sum(valores) / n
+
+    if n == 1:
+        desvio = 0.0
+    else:
+        suma_cuadrados = sum((valor - promedio) ** 2 for valor in valores)
+        desvio = sqrt(suma_cuadrados / (n - 1))
+
+no conservo lo pedido en la forma de calcular el desvio.
+
+
+
+_como lo verificaste_:
+
