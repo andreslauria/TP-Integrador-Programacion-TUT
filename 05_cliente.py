@@ -35,7 +35,7 @@ class Instrumento:
 
             # Si no llega más datos (conexión cerrada por el servidor o error de red)
             if not byte_data:
-                return respuesta
+                return parsear(respuesta)
 
             texto_nuevo = byte_data.decode("utf-8")
             respuesta += texto_nuevo
@@ -43,7 +43,7 @@ class Instrumento:
             # Verificamos si recibimos el salto de línea que marca el fin del mensaje
             if respuesta.endswith("\n"):
                 # Devolvemos la respuesta completa sin el último "\n" para mayor limpieza
-                return respuesta.rstrip("\n")
+                return parsear(respuesta.rstrip("\n"))
 
             # Si no termina en \n, el bucle continúa esperando más datos
 
@@ -52,14 +52,14 @@ class Instrumento:
 
 osciloscopio = Instrumento()  # Creo un objeto (instancia de la clase Instrumento)
 osciloscopio.conectar()
-respuesta = osciloscopio.preguntar("*IDN?")
-print(parsear(respuesta))
+respuesta_pars = osciloscopio.preguntar("*IDN?")
+print(respuesta_pars[modelo])
 osciloscopio.cerrar()
 
 mutlimetro = Instrumento(
     puerto=5556
 )  # Creo un objeto (instancia de la clase Instrumento) con otro puerto
 mutlimetro.conectar()
-respuesta = mutlimetro.preguntar("*IDN?")
-print(parsear(respuesta))
+respuesta_pars = mutlimetro.preguntar("*IDN?")
+print(respuesta_pars[modelo])
 mutlimetro.cerrar()
