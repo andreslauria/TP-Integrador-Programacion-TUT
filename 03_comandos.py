@@ -16,11 +16,11 @@ def validar(comando):
 
     # 2. Empieza con : o con *
     if not (comando.startswith(":") or comando.startswith("*")):
-        return "Empieza con : o con *"
+        return "Debe empezar con : o con *"
 
     # 3. No hay dos espacios seguidos
     if "  " in comando:
-        return "No hay dos espacios seguidos"
+        return "Hay dos espacios seguidos, debe haber uno solo"
 
     # 4. Hay a lo sumo un ?
     if comando.count("?") > 1:
@@ -40,9 +40,6 @@ def validar(comando):
             return "Una consulta no lleva argumento"
     else:
         # 6. Una orden lleva un solo argumento (debe tener exactamente un espacio)
-        # Nota: el texto de la regla contrasta "un solo" vs "a lo sumo un".
-        # Por lo tanto, exigimos que haya exactamente 1 espacio (1 argumento).
-        # Si en tu materia permiten órdenes sin argumentos (ej: *RST), cambiá `!= 1` por `> 1`.
         if comando.count(" ") != 1:
             return "Una orden lleva un solo argumento"
 
@@ -51,21 +48,19 @@ def validar(comando):
 
 
 print(validar(""))
-
+print(f"El comando ingresado: :CH1:DIS?Play, error: {validar(":CH1:DIS?Play")}")
 # ==========================================
 # BLOQUE DE PRUEBAS (ASSERTS)
 # ==========================================
 
 # 1. Pruebas para es_consulta()
-assert es_consulta(":CH1:DISPlay?") is True, "Fallo: Debería detectar que es consulta"
-assert (
-    es_consulta(":CH1:DISPlay ON") is False
-), "Fallo: Debería detectar que NO es consulta"
+assert es_consulta(":CH1:DISPlay?") is True
+assert es_consulta(":CH1:DISPlay ON") is False
 
 # 2. Pruebas para validar() - Casos VÁLIDOS (deben devolver None)
-assert validar(":CH1:DISPlay ON") is None, "Fallo: Comando válido rechazado"
-assert validar(":CH1:DISPlay?") is None, "Fallo: Consulta válida rechazada"
-assert validar("*IDN?") is None, "Fallo: Consulta válida con * rechazada"
+assert validar(":CH1:DISPlay ON") is None
+assert validar(":CH1:DISPlay?") is None
+assert validar("*IDN?") is None
 
 # 3. Pruebas para validar() - Casos INVÁLIDOS (según tabla de reglas)
 
@@ -73,10 +68,10 @@ assert validar("*IDN?") is None, "Fallo: Consulta válida con * rechazada"
 assert validar("") == "No puede estar vacío"
 
 # Regla: Empieza con : o con *
-assert validar("CH1:DISPlay ON") == "Empieza con : o con *"
+assert validar("CH1:DISPlay ON") == "Debe empezar con : o con *"
 
 # Regla: No hay dos espacios seguidos
-assert validar(":CH1:DISPlay  ON") == "No hay dos espacios seguidos"
+assert validar(":CH1:DISPlay  ON") == "Hay dos espacios seguidos, debe haber uno solo"
 
 # Regla: Hay a lo sumo un ?
 assert validar(":CH1:DISPlay??") == "Hay mas de un signo ?"
@@ -93,4 +88,4 @@ assert validar(":CH1:SCALe") == "Una orden lleva un solo argumento"
 # Regla: Una consulta no lleva argumento
 assert validar(":CH1:DISPlay ON?") == "Una consulta no lleva argumento"
 
-print("¡Todos los asserts pasaron correctamente!")
+print("¡Todas las pruebas pasaron correctamente!")

@@ -85,7 +85,88 @@ if valor is None:
 Prompt:
 Genera algunas pruebas adicionales utilizando assert
 
-###Ejercicio 6###
+### Ejercicio5###
+
+prompt: la funcion preguntar(comando) dentro de la clase, necesito que mande una consulta y devuelva la respuesta (es un QUERY). Cada comando se manda terminado en un salto de línea ( "\n" ). Cada respuesta viene terminada de la misma forma. Ese salto de línea es el que marca dónde termina un mensaje y empieza el siguiente; sin él, el instrumento se queda esperando para siempre.
+
+Que contesto:
+Claro, aquí tienes la función preguntar modificada para enviar el comando y devolver la respuesta recibida, procesando los mensajes completos separados por saltos de línea.
+
+```python
+    // ... existing code (clase Instrumento) ...
+
+    def preguntar(self, comando):
+        # Se envía el comando con un salto de línea al final
+        self.enviar(comando + "\n")
+
+        respuesta = ""
+        while True:
+            try:
+                # Leemos hasta encontrar un "\n" para completar el mensaje
+                byte_data = self.sock.recv(4096)
+                if not byte_data:
+                    break
+
+                texto_nuevo = byte_data.decode("utf-8").strip()
+                respuesta += texto_nuevo + "\n"  # Mantenemos la estructura línea por línea
+
+                if texto_nuevo.endswith("\n"):
+                    # El mensaje está completo, lo devolvemos limpio (sin el \n final si no quieres)
+                    return respuesta.rstrip("\n")
+                else:
+                    # Si falta el salto de línea, seguimos esperando para completar la respuesta
+                    continue
+            except Exception:
+                break
+
+        return respuesta
+```
+
+- La función preguntar ahora llama a enviar, agrega un "\n" al final del comando.
+- Usa un bucle para recibir datos fragmentados hasta encontrar el "\n" que indica el fin del mensaje.
+- Devuelve el contenido de la respuesta (limpiando el salto de línea final opcionalmente).
+
+Que Corregi/cambie:
+no tengo que usar try y except por que no los viemos en la materia. por que se agrega "\n" en enviar(comando), la funcion ya no lo tiene agregado en la variable mensaje?
+
+Que contesto:
+Entiendo tus dos dudas. Vamos a resolverlas paso a paso para limpiar el código y hacerlo correcto según las reglas de tu materia.
+
+1. ¿Por qué se agrega "\n" en enviar(comando) si ya lo tiene en mensaje?
+   Es una contradicción en tu lógica original, así que corregámosla:
+
+- En tu código actual enviar, haces: mensaje = f"{comando.strip()}\n". Aquí sí agregas el \n dentro de la función.
+- Si luego llamas a preguntar(comando) y ahí vuelves a hacer self.enviar(comando + "\n"), estarías enviando dos saltos de línea (algo que probablemente no desees).
+
+Solución: Dentro de preguntar, no debes agregar otro \n. Debes asumir que la función enviar ya lo añade internamente.
+Sin embargo, para asegurar que el servidor entienda el fin del comando, la mejor práctica es confiar en que enviar hace su trabajo y modificar preguntar para esperar a ese \n.
+
+```python
+    def preguntar(self, comando):
+        # Llamamos a enviar. Asumimos que 'enviar' agrega internamente el '\n'.
+        self.enviar(comando)
+
+        respuesta = ""
+        while True:
+            byte_data = self.sock.recv(4096)
+
+            # Si no llega más datos (conexión cerrada por el servidor o error de red)
+            if not byte_data:
+                return respuesta
+
+            texto_nuevo = byte_data.decode("utf-8")
+            respuesta += texto_nuevo
+
+            # Verificamos si recibimos el salto de línea que marca el fin del mensaje
+            if respuesta.endswith("\n"):
+                # Devolvemos la respuesta completa sin el último "\n" para mayor limpieza
+                return respuesta.rstrip("\n")
+
+            # Si no termina en \n, el bucle continúa esperando más datos
+```
+
+### Ejercicio 6###
+
 Prompt:
 tengo un programa llamado instrumento_virtual.py corriendo en segundo plano que simula un osciloscopio ADS3202 y el multímetro XDM1041, en la direccion 127.0.0.1 en los puertos 5555 y 5556 respectivamentete.
 
@@ -99,7 +180,7 @@ cerrar() cierra la conexión
 Al crear el objeto se le pasan la dirección y el puerto, con 127.0.0.1 y 5555 como valores por defecto.
 
 Cada comando se manda terminado en un salto de línea ( "\n" ). Cada respuesta viene terminada de la misma forma. Ese salto de línea es el que marca dónde termina un mensaje y empieza el siguiente; sin él, el instrumento se queda esperando para siempre.
-Prueba mínima: con el instrumento virtual corriendo, preguntar("*IDN?") tiene que devolver OWON,ADS3202,25470803,V1.2.0 . Y esa respuesta, pasada por parsear_idn del ejercicio 1, tiene que dar un diccionario con modelo igual a ADS3202 .
+Prueba mínima: con el instrumento virtual corriendo, preguntar("\*IDN?") tiene que devolver OWON,ADS3202,25470803,V1.2.0 . Y esa respuesta, pasada por parsear_idn del ejercicio 1, tiene que dar un diccionario con modelo igual a ADS3202 .
 
 IMPORTANTE: HACERLO CON PROGRAMACION FUNCIONAL NO POO.
 
@@ -134,7 +215,7 @@ def preguntar(sock, comando):
         if not chunk: # Si se corta la conexión
             break
         respuesta += chunk
-        
+
     return respuesta.decode('utf-8').strip()
 # Función para cerrar la conexión del socket
 def cerrar(sock):
@@ -151,21 +232,21 @@ if __name__ == "__main__":
     print("Conectando al instrumento en 127.0.0.1:5555...")
     try:
         conexion_osciloscopio = conectar()
-        
+
         # 3. Mandar consulta (QUERY)
         respuesta_cruda = preguntar(conexion_osciloscopio, "*IDN?")
         print(f"Respuesta cruda recibida: {respuesta_cruda}")
-        
+
         # 4. Parsear con la función del ejercicio anterior
         datos_parseados = parsear_idn(respuesta_cruda)
         print(f"Diccionario parseado: {datos_parseados}")
-        
+
         # 5. Comprobación de éxito
         if datos_parseados and datos_parseados.get("modelo") == "ADS3202":
             print("\n¡Prueba EXITOSA! El modelo parseado es ADS3202.")
         else:
             print("\nError: El diccionario devuelto no contiene el modelo esperado.")
-            
+
     except ConnectionRefusedError:
         print("Error: No se pudo conectar. Asegúrate de que el instrumento virtual (instrumento_virtual.py) esté corriendo.")
     finally:
@@ -176,6 +257,7 @@ if __name__ == "__main__":
 ```
 
 Notas sobre la implementación:
+
 - El estado de la conexión se mantiene en la variable conexion_osciloscopio y viaja pasándose explícitamente a enviar(), preguntar() y cerrar(). De este modo se evita la Programación Orientada a Objetos.
 - En preguntar(sock, comando), implementé un bucle while b"\n" not in respuesta que lee iterativamente el buffer del socket de red hasta detectar el carácter de nueva línea garantizando que no se pierda información ni se quede esperando indefinidamente si el mensaje es corto o largo.
 - Para probar el multímetro, solo tienes que llamar a conectar(puerto=5556) en el bloque principal.
