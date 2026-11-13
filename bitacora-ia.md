@@ -1,5 +1,6 @@
-Ejercicio_1
-Prompt:
+### Ejercicio 1
+
+_Prompt_:
 tengo una programa en python que simula estos equipos: ADS3202 — osciloscopio y el XDM1041 — multímetro , en los puertos 5555 y 5556 en el localhost.
 Como hago desde otro archivo python enviarle un \*IDN? (importando SOCKET). (con esta sentencia nos explico el query para pedir los datos a los instrumentos pero no hace falta para este ejercicio.)
 
@@ -7,69 +8,40 @@ Como hago desde otro archivo python enviarle un \*IDN? (importando SOCKET). (con
 - Devuelve None si la respuesta no sirve.
 - Los campos vienen separados por comas.
 
-Que Contesto:
+_Que Contesto_:
 
 El uso de \*IDN? como el "Hola Mundo" (o ping) de la instrumentación es una excelente práctica. Si esa consulta pasa, tienes garantizada la capa física y de transporte.
 Aquí tienes la función. Para resolver la discrepancia de que el osciloscopio devuelve 4 campos y el multímetro 5 (generalmente porque reporta la versión de hardware y de software por separado), la función agrupa todos los campos a partir del cuarto dentro de la clave version. De esta forma, conservas toda la información manteniendo exactamente las cuatro claves que pediste. (el codigo)
 
-Ejercicio_2:
+### Ejercicio 2
 
-Prompt:
+_Prompt_:
 el siguiente archivo, llamesmole magnitudes.py pide lo siguiente:
-
-Los equipos OWON devuelven los números en notación científica: 1.000000E+03 . Para una
-
-persona eso no se lee.
-
-Escribí dos funciones. a) a_numero(texto) convierte "1.000000E+03" en el número 1000.0 ,
-
-y devuelve None si el texto no es un número. b) con_unidad(valor, unidad) hace el camino
-
+Los equipos OWON devuelven los números en notación científica: 1.000000E+03 . Para una persona eso no se lee.
+Escribí dos funciones. a) a_numero(texto) convierte "1.000000E+03" en el número 1000.0, y devuelve None si el texto no es un número. b) con_unidad(valor, unidad) hace el camino
 inverso y devuelve el texto que leería un humano:
-
 Llamada Resultado
-
 con_unidad(1000.0, "Hz") 1 kHz
-
 con_unidad(2500.0, "Hz") 2.5 kHz
-
 con_unidad(2.0, "V") 2 V
-
 con_unidad(0.707, "V") 707 mV
-
 con_unidad(0.0005, "s") 500 us
-
 con_unidad(0.0, "V") 0 V
 
-Los diez ejercicios TUT · Programación
+La regla es elegir el prefijo que deje el número entre 1 y 999. Los prefijos que tenés que soportar son p , n , u , m , ninguno, k , M y G .
 
-Prof. Pablo E. Hernández · Prof. Candela Fernández Ibáñez 8 / 17
+Un caso especial:
+con_unidad(999.9999, "Hz") tiene que dar 1 kHz , no 1000 Hz.
+El número entra en el rango 1 a 999 antes de redondear, pero al redondear a tres decimales se convierte en 1000 y se sale. Si tu programa redondea y no vuelve a mirar, devuelve una unidad mal elegida.
 
-La regla es elegir el prefijo que deje el número entre 1 y 999. Los prefijos que tenés que
-
-soportar son p , n , u , m , ninguno, k , M y G .
-
-U N C A SO Q U E S E L E E S C A PA A C A S I TO DO E L M U N DO
-
-con_unidad(999.9999, "Hz") tiene que dar 1 kHz , no 1000 Hz .
-
-El número entra en el rango 1 a 999 antes de redondear, pero al redondear a tres decima‐
-
-les se convierte en 1000 y se sale. Si tu programa redondea y no vuelve a mirar, devuelve
-
-una unidad mal elegida.
-
-Que Contesto:
-
+_Que Contesto_:
 Este es un problema clásico de programación para instrumentación: pasar de la notación que entiende la máquina a formato "ingeniería" para el ojo humano.
-
-El profesor fue muy bueno al dejarte ese comentario sobre el 999.9999. El truco para resolver este caso "trampa" es redondear el número ANTES de decidir el prefijo final. Si al redondear el número trepa a 1000.0, lo dividimos por 1000 y subimos un nivel de prefijo.
-
 Aquí tienes el código completo para tu archivo magnitudes.py
 
-Prompt:
+_Prompt_:
 se puede poner lo que devuelve a_numero dentro de con_unidad
-Que Contesto:
+
+_Que Contesto_:
 Sí, totalmente. En Python puedes anidar funciones, pasando el resultado de una directamente como argumento de la otra.
 Recordá que programamos a_numero(texto) para que devuelva None si el texto está roto o no es un número.
 Si haces con_unidad(a_numero("TEXTO_ROTO"), "V"), le estarías pasando un None a la función con_unidad. Cuando con_unidad intente hacer matemáticas con ese None (como abs(None) o buscar si es mayor a cero), el programa va a crashear con un TypeError.
@@ -82,14 +54,88 @@ if valor is None:
         return "N/A"
 ```
 
-Prompt:
+_Prompt_:
 Genera algunas pruebas adicionales utilizando assert
 
-### Ejercicio5###
+### Ejercicio 3
 
-prompt: la funcion preguntar(comando) dentro de la clase, necesito que mande una consulta y devuelva la respuesta (es un QUERY). Cada comando se manda terminado en un salto de línea ( "\n" ). Cada respuesta viene terminada de la misma forma. Ese salto de línea es el que marca dónde termina un mensaje y empieza el siguiente; sin él, el instrumento se queda esperando para siempre.
+_Prompt_:hola, como puedo verificar si un string comienza o termina con un caracter especifico en python
+_Que contesto_:
+En Python, la forma estándar de verificar esto es utilizando los métodos incorporados startswith() y endswith():
 
-Que contesto:
+- str.startswith(prefix): Devuelve True si la cadena comienza con el prefijo (carácter o subcadena).
+- str.endswith(suffix): Devuelve True si la cadena termina con el sufijo.
+
+Estos métodos permiten especificar un carácter simple, pero también pueden tomar una lista de caracteres para verificar si existe coincidencia en cualquier uno de ellos.
+
+_Prompt_: para verificar que un comando tenga solo un argumento y no mas, cual es la manera mas optima
+
+_Que contesto_:
+Para verificar que un comando tenga exactamente un espacio (lo que en tu contexto de SCPI implica tener un solo argumento), la manera más óptima y directa es usar el método .count().
+Dado que ya habías descartado los casos con espacios dobles (" " in comando), contar los espacios totales es suficiente:
+
+- 0 espacios: El comando no tiene argumentos (ej. :FUNC:CAL).
+- 1 espacio: El comando tiene un argumento (ej. :FUNC:CAL 5V). ✅ Válido.
+- mas de 1 espacio: El comando tiene más de un argumento (ej. :FUNC:CAL 5V 0Hz).
+
+```python
+# ... código anterior ...
+
+    # Separaramos validaciones entre consultas y órdenes
+    if es_consulta(comando):
+        # Regla: Una consulta no lleva argumento (debe tener 0 espacios)
+        if comando.count(" ") != 0:
+            return "Una consulta no lleva argumento"
+    else:
+        # Regla: Una orden lleva un solo argumento (debe tener exactamente 1 espacio)
+        if comando.count(" ") != 1:
+            return "Una orden lleva un solo argumento"
+
+# ... resto del código ...
+```
+
+¿Por qué es óptimo?
+
+1. Legibilidad: Es intuitivo leer count(" ") != 1.
+2. Rendimiento: .count() está implementado en C a nivel de bajo nivel en Python, por lo que es muy rápido incluso para cadenas largas, y solo recorre la cadena una vez.
+3. Contexto: Al haber validado antes que no haya espacios dobles, no necesitas lógica compleja de desempaquetado (split) ni bucles; contar es la solución matemática directa.
+
+### Ejercicio 4
+
+**Prompt**:hola que libreria se puede utilizar para importar un archivo que esta en la misma carpeta, siendo que intente usar import pero me da error por que el archivo empieza con un numero.
+**Que contesto**:El problema es que en Python los nombres de los módulos (archivos importables) no pueden comenzar con un número ni contener espacios o caracteres especiales como . o -. El lenguaje import requiere un nombre de módulo válido (ej: mymodule).
+Para importar un archivo cuyo nombre empieza con un número o tiene caracteres inválidos, debes usar la biblioteca estándar importlib. \*_Consideraciones Importantes:_
+
+1. \*Extensión\*\* .py: El archivo debe tener la extensión .py. Si es un script de ejecución (como un .txt, .md o .pyw), no se puede importar como módulo, solo puede ejecutarse usando subprocess.
+2. _Estructura del directorio_: Para que sea importable desde cualquier lugar, el archivo debe estar en una carpeta que Python reconozce (usualmente la misma carpeta que tu script actual o en una carpeta de módulos instalada).
+3. _Alternativa **import**_: También existe la función global **import**('nombre_archivo'), pero es menos explícita. import_module es la mejor práctica moderna dentro de importlib.
+
+_Prompt_:para verificar que el canal sea solo CH1 o CH2, utiliza canal == "CH1" or canal =="CH2" hay otra forma mas optima
+_Que contesto_:
+Sí, hay formas más óptimas y legibles para esto. Aunque canal == "CH1" or canal == "CH2" funciona, Python ofrece herramientas nativas que son mejores:
+
+1. Usar una lista con in (Recomendado)
+   Esta es la forma estándar en Python moderna. Es más fácil de leer y mantener si quieres agregar un tercer canal (ej. "CH3") en el futuro sin anidar muchas oraciones or.
+
+_Cambie:_
+
+```python
+if canal != "CH1" or canal != "CH2":
+    return None
+```
+
+por
+
+```python
+if canal not in ("CH1","CH2"):
+        return None
+```
+
+### Ejercicio 5
+
+_Prompt_: la funcion preguntar(comando) dentro de la clase, necesito que mande una consulta y devuelva la respuesta (es un QUERY). Cada comando se manda terminado en un salto de línea ( "\n" ). Cada respuesta viene terminada de la misma forma. Ese salto de línea es el que marca dónde termina un mensaje y empieza el siguiente; sin él, el instrumento se queda esperando para siempre.
+
+_Que contesto_:
 Claro, aquí tienes la función preguntar modificada para enviar el comando y devolver la respuesta recibida, procesando los mensajes completos separados por saltos de línea.
 
 ```python
@@ -126,10 +172,10 @@ Claro, aquí tienes la función preguntar modificada para enviar el comando y de
 - Usa un bucle para recibir datos fragmentados hasta encontrar el "\n" que indica el fin del mensaje.
 - Devuelve el contenido de la respuesta (limpiando el salto de línea final opcionalmente).
 
-Que Corregi/cambie:
+_Que Corregi/cambie:_
 no tengo que usar try y except por que no los viemos en la materia. por que se agrega "\n" en enviar(comando), la funcion ya no lo tiene agregado en la variable mensaje?
 
-Que contesto:
+_Que contesto_:
 Entiendo tus dos dudas. Vamos a resolverlas paso a paso para limpiar el código y hacerlo correcto según las reglas de tu materia.
 
 1. ¿Por qué se agrega "\n" en enviar(comando) si ya lo tiene en mensaje?
@@ -166,98 +212,3 @@ Sin embargo, para asegurar que el servidor entienda el fin del comando, la mejor
 ```
 
 ### Ejercicio 6###
-
-Prompt:
-tengo un programa llamado instrumento_virtual.py corriendo en segundo plano que simula un osciloscopio ADS3202 y el multímetro XDM1041, en la direccion 127.0.0.1 en los puertos 5555 y 5556 respectivamentete.
-
-Acá aparece la red. Es menos de lo que parece: SCPI por LAN es texto plano sobre una
-conexión TCP, una línea por comando, y socket viene con Python.
-Escribí una clase Instrumento con tres métodos:
-Método Qué hace
-enviar(comando) manda una orden y no espera nada — es ENVIAR
-preguntar(comando) manda una consulta y devuelve la respuesta — es QUERY
-cerrar() cierra la conexión
-Al crear el objeto se le pasan la dirección y el puerto, con 127.0.0.1 y 5555 como valores por defecto.
-
-Cada comando se manda terminado en un salto de línea ( "\n" ). Cada respuesta viene terminada de la misma forma. Ese salto de línea es el que marca dónde termina un mensaje y empieza el siguiente; sin él, el instrumento se queda esperando para siempre.
-Prueba mínima: con el instrumento virtual corriendo, preguntar("\*IDN?") tiene que devolver OWON,ADS3202,25470803,V1.2.0 . Y esa respuesta, pasada por parsear_idn del ejercicio 1, tiene que dar un diccionario con modelo igual a ADS3202 .
-
-IMPORTANTE: HACERLO CON PROGRAMACION FUNCIONAL NO POO.
-
-Que Contesto:
-
-Para resolver este ejercicio utilizando un enfoque de programación funcional (sin clases ni objetos de la conexión), en lugar de instanciar un objeto con sus métodos, vamos a definir funciones puras o de primer orden que reciban el socket (la conexión) como argumento.
-Como el archivo 01_identificacion.py comienza con un número, se debe utilizar importlib para importarlo correctamente en el script.
-Aquí tienes el código de solución:
-
-```python
-
-import socket
-import importlib
-
-# Función para abrir la conexión y devolver el socket
-def conectar(host="127.0.0.1", puerto=5555):
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((host, puerto))
-    return sock
-# Función para enviar un comando sin esperar respuesta
-def enviar(sock, comando):
-    # Aseguramos que termine con salto de línea
-    mensaje = f"{comando.strip()}\n"
-    sock.sendall(mensaje.encode('utf-8'))
-# Función para enviar una consulta y leer la respuesta
-def preguntar(sock, comando):
-    enviar(sock, comando)
-    # Recibimos datos hasta encontrar el salto de línea "\n"
-    respuesta = b""
-    while b"\n" not in respuesta:
-        chunk = sock.recv(1024)
-        if not chunk: # Si se corta la conexión
-            break
-        respuesta += chunk
-
-    return respuesta.decode('utf-8').strip()
-# Función para cerrar la conexión del socket
-def cerrar(sock):
-    sock.close()
-# ==========================================
-# Script de prueba (Ejecución principal)
-# ==========================================
-if __name__ == "__main__":
-    # 1. Importar la función parsear_idn del ejercicio 1
-    modulo_idn = importlib.import_module("01_identificacion")
-    parsear_idn = modulo_idn.parsear_idn
-
-    # 2. Conectar al instrumento (Osciloscopio en puerto 5555 por defecto)
-    print("Conectando al instrumento en 127.0.0.1:5555...")
-    try:
-        conexion_osciloscopio = conectar()
-
-        # 3. Mandar consulta (QUERY)
-        respuesta_cruda = preguntar(conexion_osciloscopio, "*IDN?")
-        print(f"Respuesta cruda recibida: {respuesta_cruda}")
-
-        # 4. Parsear con la función del ejercicio anterior
-        datos_parseados = parsear_idn(respuesta_cruda)
-        print(f"Diccionario parseado: {datos_parseados}")
-
-        # 5. Comprobación de éxito
-        if datos_parseados and datos_parseados.get("modelo") == "ADS3202":
-            print("\n¡Prueba EXITOSA! El modelo parseado es ADS3202.")
-        else:
-            print("\nError: El diccionario devuelto no contiene el modelo esperado.")
-
-    except ConnectionRefusedError:
-        print("Error: No se pudo conectar. Asegúrate de que el instrumento virtual (instrumento_virtual.py) esté corriendo.")
-    finally:
-        # 6. Siempre cerramos la conexión al terminar
-        if 'conexion_osciloscopio' in locals():
-            cerrar(conexion_osciloscopio)
-            print("Conexión cerrada.")
-```
-
-Notas sobre la implementación:
-
-- El estado de la conexión se mantiene en la variable conexion_osciloscopio y viaja pasándose explícitamente a enviar(), preguntar() y cerrar(). De este modo se evita la Programación Orientada a Objetos.
-- En preguntar(sock, comando), implementé un bucle while b"\n" not in respuesta que lee iterativamente el buffer del socket de red hasta detectar el carácter de nueva línea garantizando que no se pierda información ni se quede esperando indefinidamente si el mensaje es corto o largo.
-- Para probar el multímetro, solo tienes que llamar a conectar(puerto=5556) en el bloque principal.

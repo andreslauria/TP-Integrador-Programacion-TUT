@@ -1,12 +1,15 @@
 import importlib
 
 comandos_importados = importlib.import_module("03_comandos")
-validar = comandos_importados.validar
+
+validar = (
+    comandos_importados.validar
+)  # Importa la función validar desde el módulo 03_comandos
 
 
 def comandos_de_canal(canal, display, acoplamiento, sonda, escala):
     # Comprueba que el canal sea uno de los dos permitidos.
-    if canal not in ("CH1","CH2",):
+    if canal not in ("CH1", "CH2"):
         return None
 
     return [
@@ -31,7 +34,7 @@ assert comandos == [
 ]
 
 ## Verificando que los comandos que genera esta funcion validan en la en la funcion del ejercicio 03_comandos.py
-for comando in range(len(comandos)-1):
+for comando in range(len(comandos) - 1):
     # Comprueba que validar acepte todas las órdenes generadas.
     print(comandos[comando])
     assert validar(comandos[comando]) is None

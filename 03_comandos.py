@@ -10,23 +10,23 @@ def validar(comando):
     Valida un comando SCPI según las reglas dadas.
     Devuelve None si es válido o el mensaje de error correspondiente si no lo es.
     """
-    # 1. No puede estar vacío
+    # No puede estar vacío
     if not comando:
         return "No puede estar vacío"
 
-    # 2. Empieza con : o con *
+    # Empieza con : o con *
     if not (comando.startswith(":") or comando.startswith("*")):
         return "Debe empezar con : o con *"
 
-    # 3. No hay dos espacios seguidos
+    # No hay dos espacios seguidos
     if "  " in comando:
         return "Hay dos espacios seguidos, debe haber uno solo"
 
-    # 4. Hay a lo sumo un ?
+    # Hay a lo sumo un ?
     if comando.count("?") > 1:
         return "Hay mas de un signo ?"
 
-    # 5. El ? va al final
+    # El ? va al final
     # Si existe un '?', obligatoriamente debe estar en la última posición
     if "?" in comando and not comando.endswith("?"):
         return "El ? va al final"
@@ -35,11 +35,11 @@ def validar(comando):
     # Como ya descartamos que haya dos espacios seguidos, la cantidad de espacios
     # determina la cantidad de argumentos.
     if es_consulta(comando):
-        # 7. Una consulta no lleva argumento (no debe tener espacios)
-        if " " in comando:
+        # Una consulta no lleva argumento (no debe tener espacios)
+        if comando.count(" ") != 0:
             return "Una consulta no lleva argumento"
     else:
-        # 6. Una orden lleva un solo argumento (debe tener exactamente un espacio)
+        # Una orden lleva un solo argumento (debe tener exactamente un espacio)
         if comando.count(" ") != 1:
             return "Una orden lleva un solo argumento"
 
