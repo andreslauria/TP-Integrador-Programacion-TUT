@@ -14,11 +14,11 @@ class Instrumento:
 
     def conectar(self):
         self.sock.connect((self.host, self.puerto))
-        print("Conexion establecida")
+        print("Conexion establecida\n")
 
     def cerrar(self):
         self.sock.close()
-        print("Conexion cerrada")
+        print("Conexion cerradan.\n")
 
     def enviar(self, comando):
         self.comando = comando
@@ -54,17 +54,17 @@ class Instrumento:
 
 
 ##PRUEBA MINIMA
+if __name__ == "__main__":
+    osciloscopio = Instrumento()  # Creo un objeto (instancia de la clase Instrumento)
+    osciloscopio.conectar()
+    respuesta_pars = osciloscopio.preguntar("*IDN?")
+    print(f"El modelo del osciloscopio es: {respuesta_pars["modelo"]}")
+    osciloscopio.cerrar()
 
-osciloscopio = Instrumento()  # Creo un objeto (instancia de la clase Instrumento)
-osciloscopio.conectar()
-respuesta_pars = osciloscopio.preguntar("*IDN?")
-print(f"El modelo del osciloscopio es: {respuesta_pars["modelo"]}")
-osciloscopio.cerrar()
-
-mutlimetro = Instrumento(
-    puerto=5556
-)  # Creo un objeto (instancia de la clase Instrumento) con otro puerto
-mutlimetro.conectar()
-respuesta_pars = mutlimetro.preguntar("*IDN?")
-print(f"El modelo del multimetro es: {respuesta_pars["modelo"]}")
-mutlimetro.cerrar()
+    mutlimetro = Instrumento(
+        puerto=5556
+    )  # Creo un objeto (instancia de la clase Instrumento) con otro puerto
+    mutlimetro.conectar()
+    respuesta_pars = mutlimetro.preguntar("*IDN?")
+    print(f"El modelo del multimetro es: {respuesta_pars["modelo"]}")
+    mutlimetro.cerrar()

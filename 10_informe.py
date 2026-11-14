@@ -13,7 +13,7 @@ resumen = importlib.import_module("09_estadistica").resumen
 def armar_informe(idn, series, verificaciones):
     """Construye el informe como texto, sin imprimir ni abrir archivos."""
     lineas = [
-        "INFORME DE MEDICIONES",
+        "INFORME DE MEDICIONES\n",
         (
             f"Instrumento: {idn['fabricante']} {idn['modelo']} "
             f"(serie {idn['serie']}, version {idn['version']})"

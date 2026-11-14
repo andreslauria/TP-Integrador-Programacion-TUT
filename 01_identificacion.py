@@ -56,4 +56,4 @@ resultado_espacios = parsear_idn("  OWON  ,  ADS3202 , 254   , V1.0 ")
 assert resultado_espacios["fabricante"] == "OWON"
 assert resultado_espacios["modelo"] == "ADS3202"
 
-print("pruebas OK")
+#print("pruebas OK")

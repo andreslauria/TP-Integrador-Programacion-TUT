@@ -385,17 +385,7 @@ Para correr el banco, iniciá python instrumento_virtual.py en una terminal y lu
 
 ```
 Conexion establecida
-Se envia mensaje: *IDN?
 
-El modelo del osciloscopio es: ADS3202
-Conexion cerrada
-Conexion establecida
-Se envia mensaje: *IDN?
-
-El modelo del multimetro es: XDM1041
-Conexion cerrada
-pruebas OK
-Conexion establecida
 Se envia mensaje: *IDN?
 
 Se envia mensaje: :MEASUrement:CH1:FREQuency?
@@ -410,8 +400,10 @@ Se envia mensaje: :MEASUrement:CH2:PKPK?
 
 Se envia mensaje: :MEASUrement:CH2:CYCRms?
 
-Conexion cerrada
+Conexion cerradan.
+
 INFORME DE MEDICIONES
+
 Instrumento: OWON ADS3202 (serie 25470803, version V1.2.0)
 
 Series del log:
@@ -423,6 +415,6 @@ ADS3202 CH2 PKPK: n=20, promedio=799.803 mV, minimo=796.107 mV, maximo=803.44 mV
 ADS3202 CH2 CYCRMS: n=20, promedio=282.961 mV, minimo=281.512 mV, maximo=284.166 mV
 
 Verificaciones:
-CH1: OK (Vrms medido 704.661 mV, teorico 709.889 mV)
-CH2: OK (Vrms medido 282.16 mV, teorico 284.018 mV)
+CH1: OK (Vrms medido 709.015 mV, teorico 705.61 mV)
+CH2: OK (Vrms medido 282.546 mV, teorico 283.943 mV)
 ```

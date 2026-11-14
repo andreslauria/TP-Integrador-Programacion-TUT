@@ -51,4 +51,4 @@ assert comandos_de_canal("CH2", "OFF", "AC", "1X", "2v") == [
 # Comprueba que un canal no permitido devuelva None.
 assert comandos_de_canal("CH3", "ON", "DC", "10X", "1v") is None
 
-print("¡Todos los asserts pasaron correctamente!")
+#print("¡Todos los asserts pasaron correctamente!")

@@ -20,6 +20,7 @@ def vrms_teorico(vpp):
     # Vrms = Vpp / (2 × raíz de 2)
     return vpp / (2 * math.sqrt(2))
 
+
 # definimos la segunda funcion
 def coincide(medido, teorico, tolerancia=0.02):
     # Verificamos que los valores sean números
@@ -56,6 +57,7 @@ def coincide(medido, teorico, tolerancia=0.02):
 
     # Devuelve True si el error está dentro de la tolerancia
     return error <= tolerancia
+
 
 # definimos la tercera funcion
 def verificar_canal(filas, canal):
@@ -99,100 +101,97 @@ def verificar_canal(filas, canal):
         "vpp": vpp,
         "vrms_medido": vrms_medido,
         "vrms_teorico": teorico,
-        "coinciden": coinciden
+        "coinciden": coinciden,
     }
 
 
 # ---- pruebas ----
+if __name__ == "__main__":
+    # Prueba 1:
+    # Una senoide de 2 V pico a pico tiene aproximadamente
+    # 0.707 V RMS.
+    assert abs(vrms_teorico(2.0) - 0.70710678) < 0.0001
 
-# Prueba 1:
-# Una senoide de 2 V pico a pico tiene aproximadamente
-# 0.707 V RMS.
-assert abs(vrms_teorico(2.0) - 0.70710678) < 0.0001
+    # Prueba 2 (caso raro):
+    # Un valor negativo no tiene sentido como Vpp.
+    assert vrms_teorico(-2.0) is None
 
-
-# Prueba 2 (caso raro):
-# Un valor negativo no tiene sentido como Vpp.
-assert vrms_teorico(-2.0) is None
-
-
-# Prueba 3:
-# Un valor cercano al teórico, dentro del 2 %, coincide.
-assert coincide(0.71, 0.70710678) is True
+    # Prueba 3:
+    # Un valor cercano al teórico, dentro del 2 %, coincide.
+    assert coincide(0.71, 0.70710678) is True
 
 
-# Prueba 4:
-# Un valor alejado del teórico no coincide.
-assert coincide(1.0, 0.70710678) is False
+    # Prueba 4:
+    # Un valor alejado del teórico no coincide.
+    assert coincide(1.0, 0.70710678) is False
 
 
-# Prueba 5:
-# Formato real de las filas que devuelve barrer().
-filas_senoide = [
-    {
-        "canal": "CH1",
-        "magnitud": "FREQuency",
-        "unidad": "Hz",
-        "texto_crudo": "1000",
-        "valor": 1000.0
-    },
-    {
-        "canal": "CH1",
-        "magnitud": "PKPK",
-        "unidad": "V",
-        "texto_crudo": "2.0",
-        "valor": 2.0
-    },
-    {
-        "canal": "CH1",
-        "magnitud": "CYCRms",
-        "unidad": "V",
-        "texto_crudo": "0.707",
-        "valor": 0.707
-    }
-]
+    # Prueba 5:
+    # Formato real de las filas que devuelve barrer().
+    filas_senoide = [
+        {
+            "canal": "CH1",
+            "magnitud": "FREQuency",
+            "unidad": "Hz",
+            "texto_crudo": "1000",
+            "valor": 1000.0,
+        },
+        {
+            "canal": "CH1",
+            "magnitud": "PKPK",
+            "unidad": "V",
+            "texto_crudo": "2.0",
+            "valor": 2.0,
+        },
+        {
+            "canal": "CH1",
+            "magnitud": "CYCRms",
+            "unidad": "V",
+            "texto_crudo": "0.707",
+            "valor": 0.707,
+        },
+    ]
 
-resultado = verificar_canal(filas_senoide, "CH1")
+    resultado = verificar_canal(filas_senoide, "CH1")
 
-assert resultado is not None
-assert resultado["coinciden"] is True
-
-
-# Una señal cuadrada de 2 Vpp tiene Vrms = 1 V.
-# Pero nuestra función calcula el valor teórico de una SENOIDE:
-# aproximadamente 0.707 V.
-#
-# Por lo tanto, NO deben coincidir.
-
-filas_cuadrada = [
-    {
-        "canal": "CH1",
-        "magnitud": "PKPK",
-        "unidad": "V",
-        "texto_crudo": "2.0",
-        "valor": 2.0
-    },
-    {
-        "canal": "CH1",
-        "magnitud": "CYCRms",
-        "unidad": "V",
-        "texto_crudo": "1.0",
-        "valor": 1.0
-    }
-]
-
-resultado_cuadrada = verificar_canal(filas_cuadrada, "CH1")
-
-assert resultado_cuadrada is not None
-assert resultado_cuadrada["coinciden"] is False
+    assert resultado is not None
+    assert resultado["coinciden"] is True
 
 
-# Caso raro: el canal no existe.
-assert verificar_canal(filas_senoide, "CH99") is None
+    # Una señal cuadrada de 2 Vpp tiene Vrms = 1 V.
+    # Pero nuestra función calcula el valor teórico de una SENOIDE:
+    # aproximadamente 0.707 V.
+    #
+    # Por lo tanto, NO deben coincidir.
+
+    filas_cuadrada = [
+        {
+            "canal": "CH1",
+            "magnitud": "PKPK",
+            "unidad": "V",
+            "texto_crudo": "2.0",
+            "valor": 2.0,
+        },
+        {
+            "canal": "CH1",
+            "magnitud": "CYCRms",
+            "unidad": "V",
+            "texto_crudo": "1.0",
+            "valor": 1.0,
+        },
+    ]
+
+    resultado_cuadrada = verificar_canal(filas_cuadrada, "CH1")
+
+    assert resultado_cuadrada is not None
+    assert resultado_cuadrada["coinciden"] is False
 
 
-# Caso raro: lista vacía.
-assert verificar_canal([], "CH1") is None
+    # Caso raro: el canal no existe.
+    assert verificar_canal(filas_senoide, "CH99") is None
 
 
-print("pruebas OK")
+    # Caso raro: lista vacía.
+    assert verificar_canal([], "CH1") is None
+
+    print("pruebas OK")

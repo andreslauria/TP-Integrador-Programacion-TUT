@@ -47,8 +47,8 @@ def validar(comando):
     return None
 
 
-print(validar(""))
-print(f"El comando ingresado: :CH1:DIS?Play, error: {validar(":CH1:DIS?Play")}")
+#print(validar(""))
+#print(f"El comando ingresado: :CH1:DIS?Play, error: {validar(":CH1:DIS?Play")}")
 # ==========================================
 # BLOQUE DE PRUEBAS (ASSERTS)
 # ==========================================
@@ -88,4 +88,4 @@ assert validar(":CH1:SCALe") == "Una orden lleva un solo argumento"
 # Regla: Una consulta no lleva argumento
 assert validar(":CH1:DISPlay ON?") == "Una consulta no lleva argumento"
 
-print("¡Todas las pruebas pasaron correctamente!")
+#print("¡Todas las pruebas pasaron correctamente!")
