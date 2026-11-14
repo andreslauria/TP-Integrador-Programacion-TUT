@@ -86,9 +86,7 @@ print("Resultado:")
 for m in lista_resultado:
     print(m)
 
-print("\n--- Caso 3: Medición con valor grande (verifica prefijos kM/kHz) ---")
+print("\n--- Error al identificar equipo---")
 instr_grande = InstrumentoFalso(idn="OK", valor_fijo="5000000.0")  # 5 MHz, 5 MV
-lista_resultado = barrer(instr_grande, ["CH1"])
-print("Resultado con valor grande:")
-for m in lista_resultado:
-    print(m)
+resultado = barrer(instr_grande, ["CH1"])
+print(resultado)
