@@ -18,7 +18,7 @@ def barrer(instrumento, canales):
     # Si parsear_idn falla (ej. menos de 4 campos), no seguimos
     info_equipo = parsear_idn(idn_respuesta)
     if info_equipo is None:
-        return []
+        return "Error: No se pudo identificar el equipo"
 
     # Lista para acumular mediciones
     mediciones = []
@@ -87,7 +87,7 @@ for m in lista_resultado:
     print(m)
 
 print("\n--- Caso 3: Medición con valor grande (verifica prefijos kM/kHz) ---")
-instr_grande = InstrumentoFalso(idn="OK", valor_fijo="5000000.0") # 5 MHz, 5 MV
+instr_grande = InstrumentoFalso(idn="OK", valor_fijo="5000000.0")  # 5 MHz, 5 MV
 lista_resultado = barrer(instr_grande, ["CH1"])
 print("Resultado con valor grande:")
 for m in lista_resultado:
