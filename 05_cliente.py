@@ -14,11 +14,11 @@ class Instrumento:
 
     def conectar(self):
         self.sock.connect((self.host, self.puerto))
-        print("Conexion establecida\n")
+        print("Conexion establecida.\n")
 
     def cerrar(self):
         self.sock.close()
-        print("Conexion cerradan.\n")
+        print("Conexion cerrada.\n")
 
     def enviar(self, comando):
         self.comando = comando
