@@ -91,4 +91,4 @@ assert con_unidad(-5.0, "V") == "-5 V"
 assert con_unidad(-0.015, "A") == "-15 mA"
 
 
-print("Todas las pruebas pasaron OK. ¡Éxitos en la defensa!")
+print("Todas las pruebas pasaron OK.")

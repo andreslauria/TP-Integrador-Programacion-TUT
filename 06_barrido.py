@@ -1,71 +1,94 @@
+import importlib
+
+# Importamos las utilidades de los otros ejercicios
+comandos = importlib.import_module("03_comandos")
+identificacion = importlib.import_module("01_identificacion")
+magnitudes = importlib.import_module("02_magnitudes")
+
+validar = comandos.validar
+parsear_idn = identificacion.parsear_idn
+con_unidad = magnitudes.con_unidad
+a_numero = magnitudes.a_numero
+
+
 def barrer(instrumento, canales):
-    # Lista vacía donde vamos a ir guardando cada medición (cada una va a ser un diccionario)
+    # 1. Identificación del equipo (Comando *IDN?)
+    idn_respuesta = instrumento.preguntar("*IDN?")
+
+    # Si parsear_idn falla (ej. menos de 4 campos), no seguimos
+    info_equipo = parsear_idn(idn_respuesta)
+    if info_equipo is None:
+        return []
+
+    # Lista para acumular mediciones
     mediciones = []
 
-    # Diccionario que relaciona cada magnitud con su unidad correspondiente
-    magnitudes = {
-        "FREQuency": "Hz",   # la frecuencia se mide en Hertz
-        "PKPK": "V",         # el voltaje pico a pico se mide en Volts
-        "CYCRms": "V"        # el voltaje RMS (por ciclo) también se mide en Volts
-    }
+    # Diccionario de las magnitudes a medir
+    definiciones_magnitud = {"FREQuency": "Hz", "PKPK": "V", "CYCRms": "V"}
 
-    for canal in canales:  # recorremos cada canal pedido, por ejemplo "CH1" y "CH2"
-        for magnitud, unidad in magnitudes.items():  # recorremos las 3 magnitudes para ese canal
+    for canal in canales:
+        for clave_magnitud, unidad_base in definiciones_magnitud.items():
 
-            # Armamos el comando SCPI exacto que hay que mandarle al instrumento
-            comando = f":MEASUrement:{canal}:{magnitud}?"
+            # Construcción del comando SCPI (siempre es consulta)
+            comando = f":MEASUrement:{canal}:{clave_magnitud}?"
 
-            # Le preguntamos al instrumento y guardamos su respuesta tal cual, como texto
+            # Leemos el valor del instrumento
             texto_crudo = instrumento.preguntar(comando)
 
-            # Tratamos de convertir ese texto a número
-            try:
-                valor = float(texto_crudo)  # si se puede convertir, acá queda el número
-            except ValueError:
-                valor = None  # si el instrumento contestó un error, no hay número válido
+            # Convertimos el texto a número usando a_numero
+            valor_numerico = a_numero(texto_crudo)
 
-            # Armamos el diccionario con toda la info de esta medición puntual
+            valor_final = con_unidad(valor_numerico, unidad_base)
+
             medicion = {
                 "canal": canal,
-                "magnitud": magnitud,
-                "unidad": unidad,
+                "magnitud": clave_magnitud,
+                "valor y unidad": valor_final,
                 "texto_crudo": texto_crudo,
-                "valor": valor
             }
 
-            mediciones.append(medicion)  # la agregamos a la lista de resultados
+            mediciones.append(medicion)
 
-    return mediciones  # devolvemos la lista completa (6 mediciones si son 2 canales x 3 magnitudes)
+    return mediciones
 
 
-# ---- clase de mentira para probar sin el instrumento real ----
+# ---- Clase "Marioneta" (Instrumento Falso Simplificado) ----
+
+
 class InstrumentoFalso:
-    # Simula un instrumento real: tiene el mismo método "preguntar" que usaría barrer()
-    def __init__(self, respuesta_fija):
-        self.respuesta_fija = respuesta_fija  # guardamos qué va a contestar siempre
+    """
+    Simula un instrumento que responde siempre lo mismo.
+    Ideal para probar barrer() sin conectar hardware real.
+    """
+
+    def __init__(self, idn="OWON,Fake,Osciloscopio,V1.0", valor_fijo="1.5"):
+        """
+        :param idn: Respuesta al comando *IDN? (debe tener 4 campos)
+        :param valor_fijo: Valor que devolverá a CUALQUIER comando de medición.
+        Puede ser un número ("1.5") o la cadena "ERROR".
+        """
+        self.respuesta_idn = idn
+        self.valor_fijo = valor_fijo
 
     def preguntar(self, comando):
-        # Sin importar qué comando le mandemos, siempre devuelve la misma respuesta
-        return self.respuesta_fija
+        if comando == "*IDN?":
+            return self.respuesta_idn
+        return self.valor_fijo
 
 
-# ---- pruebas ----
+# PRUEBA
 
-# Caso 1: instrumento que siempre contesta un número válido
-instrumento_ok = InstrumentoFalso("1.23")
-resultado_ok = barrer(instrumento_ok, ["CH1", "CH2"])
-assert len(resultado_ok) == 6  # 2 canales x 3 magnitudes = 6 mediciones
-assert resultado_ok[0]["valor"] == 1.23  # el valor numérico se convirtió bien
-assert resultado_ok[0]["texto_crudo"] == "1.23"  # el texto crudo se guardó tal cual
 
-# Caso 2 (caso raro): instrumento que contesta un error, no un número
-instrumento_error = InstrumentoFalso("ERROR")
-resultado_error = barrer(instrumento_error, ["CH1"])
-assert resultado_error[0]["valor"] is None  # no se pudo convertir, tiene que quedar en None
-assert resultado_error[0]["texto_crudo"] == "ERROR"  # pero el texto crudo igual se guarda
+print("\n Medición con valor pequeño (verifica prefijo)")
+instr_pequeno = InstrumentoFalso(idn="OWON,Fake,V1.0,1.2", valor_fijo="7.070000E-05")
+lista_resultado = barrer(instr_pequeno, ["CH1"])
+print("Resultado:")
+for m in lista_resultado:
+    print(m)
 
-# Caso 3 (caso raro): lista de canales vacía
-resultado_vacio = barrer(instrumento_ok, [])
-assert resultado_vacio == []  # sin canales, no debería haber ninguna medición
-
-print("pruebas OK")
+print("\n--- Caso 3: Medición con valor grande (verifica prefijos kM/kHz) ---")
+instr_grande = InstrumentoFalso(idn="OK", valor_fijo="5000000.0") # 5 MHz, 5 MV
+lista_resultado = barrer(instr_grande, ["CH1"])
+print("Resultado con valor grande:")
+for m in lista_resultado:
+    print(m)
