@@ -212,12 +212,12 @@ Sin embargo, para asegurar que el servidor entienda el fin del comando, la mejor
 ```
 
 ### Ejercicio 6###
+
 Escribí
 
 `barrer(instrumento, canales)` , que le pide al instrumento las tres magnitudes de
 cada canal y devuelve una lista de diccionarios, uno por medición, con el canal, la mag‐
 nitud, la unidad, el texto crudo que devolvió el equipo y el valor ya convertido a número.
-
 
 Los comandos son estos, y el ? de cada uno es obligatorio:
 
@@ -241,36 +241,26 @@ El archivo ya contiene el esqueleto de barrer; voy a reutilizar a_numero() del p
 Implementé barrer(instrumento, canales) en 06_barrido.py. Consulta las tres magnitudes por canal con ?, conserva la respuesta cruda y usa a_numero(); las respuestas no numéricas quedan como None. Agregué descripciones breves por bloque y pruebas con dos canales y una respuesta de error.
 Verifiqué con python .\06_barrido.py y python .\02_magnitudes.py; ambas pruebas pasaron.
 
-
-
 _como lo verificaste_:
 
 se verifica con un archivo de pruebas de clase.
 
-class InstrumentoFalso:
-    # Simula un instrumento real: tiene el mismo método "preguntar" que usaría barrer()
-    def __init__(self, respuesta_fija):
-        self.respuesta_fija = respuesta_fija  # guardamos que va a contestar siempre
+class InstrumentoFalso: # Simula un instrumento real: tiene el mismo método "preguntar" que usaría barrer()
+def **init**(self, respuesta_fija):
+self.respuesta_fija = respuesta_fija # guardamos que va a contestar siempre
 .
 .
 .
-
-
-
 
 ### Ejercicio 7###
 
-*Prompt*:
-
-
-
+_Prompt_:
 
 -Se deben contemplar valores incorrectos, valores negativos y casos especiales, como cuando el valor teórico es cero.
 
 -También se solicitaron pruebas utilizando `assert`, incluyendo un caso de señal cuadrada para comprobar que el valor medido no coincida con el teórico de una señal senoidal.
 
-*Qué contestó*:
-
+_Qué contestó_:
 
 -Durante el desarrollo se utilizó inicialmente una operación matemática para calcular la raíz cuadrada sin importar una biblioteca adicional.
 
@@ -282,13 +272,9 @@ De esta manera, el cálculo quedó expresado mediante una función específica d
 
 -Se agregaron pruebas con `assert` para verificar los cálculos, las tolerancias y los casos en los que las mediciones no coinciden.
 
-
-
 ### Ejercicio 8###
 
-
-*Prompt*:
-
+_Prompt_:
 
 El archivo `mediciones.log` proporcionado por la cátedra contiene registros reales de una sesión de medición.
 
@@ -301,7 +287,6 @@ Cada línea contiene seis campos separados por espacios:
 - Magnitud.
 - Valor medido.
 
-
 Se deben contemplar las siguientes validaciones:
 
 - Ignorar líneas vacías y comentarios que comiencen con `#`.
@@ -313,16 +298,13 @@ Se deben contemplar las siguientes validaciones:
 
 Como condición especial, una de las líneas válidas utiliza tabulaciones en lugar de espacios para separar los campos.
 
-*Qué contestó*:
-
+_Qué contestó_:
 
 Para separar los campos se utilizó `linea.split()` sin argumentos. Esto permite reconocer tanto espacios como tabulaciones, evitando descartar una línea válida del archivo.
 
 También se implementó `leer_log()` para recorrer el archivo utilizando `enumerate()`, identificar el número de cada línea, agrupar las mediciones mediante una clave compuesta por equipo, canal y magnitud, y almacenar los registros rechazados junto con el motivo correspondiente.
 
 Para las pruebas se utilizaron instrucciones `assert` y el archivo real `mediciones.log` proporcionado por la cátedra, verificando que se obtengan las series y los registros rechazados esperados.
-
-
 
 ### Ejercicio 9###
 
@@ -332,7 +314,6 @@ a) resumen(valores) , que devuelve un diccionario con n , minimo , maximo , prom
 dio y desvio , o None si la lista está vacía; y b) fuera_de_rango(valores, minimo, maximo) ,
 que devuelve las posiciones de los valores que se salen del rango. Los dos extremos del
 rango cuentan como adentro.
-
 
 El desvío estándar de la muestra se calcula dividiendo por `n - 1` :
 
@@ -359,9 +340,8 @@ incorporo la biblioteca MATH y vi que puso:
 
 from math import sqrt
 
-
 def resumen(valores):
-    n = len(valores)
+n = len(valores)
 
     if n == 0:
         return None
@@ -376,15 +356,13 @@ def resumen(valores):
 
 no conservo lo pedido en la forma de calcular el desvio.
 
-
-
 _como lo verificaste_:
 
 ### Ejercicio 10###
 
 _Prompt_:
 
-Escribí 
+Escribí
 `armar_informe(idn, series, verificaciones)` , que devuelve el informe completo
 como una sola cadena de texto: el instrumento identificado, una línea por serie con su `n` ,
 su promedio, su mínimo y su máximo ya con unidades legibles, y el resultado de cada ve‐
@@ -397,8 +375,6 @@ Y al final, el programa completo: con el instrumento virtual prendido, `10_infor
 que identificar el equipo, barrer los dos canales, verificarlos, leer el log, y escribir el in‐
 forme en pantalla. Ese es el banco de mediciones terminado.
 
-
-
 _Que Contesto_ y _como verificamos_:
 
 Voy a revisar el informe y sus dependencias para completar el flujo de identificación, barrido, verificación y lectura del log; sin tocar el archivo de barrido que restauraste.
@@ -407,3 +383,46 @@ Revisé 10_informe.py: ya incluye armar_informe(idn, series, verificaciones), qu
 
 Para correr el banco, iniciá python instrumento_virtual.py en una terminal y luego python 10_informe.py en otra. No hice cambios porque el archivo ya cumple lo solicitado.
 
+```
+Conexion establecida
+Se envia mensaje: *IDN?
+
+El modelo del osciloscopio es: ADS3202
+Conexion cerrada
+Conexion establecida
+Se envia mensaje: *IDN?
+
+El modelo del multimetro es: XDM1041
+Conexion cerrada
+pruebas OK
+Conexion establecida
+Se envia mensaje: *IDN?
+
+Se envia mensaje: :MEASUrement:CH1:FREQuency?
+
+Se envia mensaje: :MEASUrement:CH1:PKPK?
+
+Se envia mensaje: :MEASUrement:CH1:CYCRms?
+
+Se envia mensaje: :MEASUrement:CH2:FREQuency?
+
+Se envia mensaje: :MEASUrement:CH2:PKPK?
+
+Se envia mensaje: :MEASUrement:CH2:CYCRms?
+
+Conexion cerrada
+INFORME DE MEDICIONES
+Instrumento: OWON ADS3202 (serie 25470803, version V1.2.0)
+
+Series del log:
+ADS3202 CH1 FREQ: n=21, promedio=999.258 Hz, minimo=995.546 Hz, maximo=1.005 kHz
+ADS3202 CH1 PKPK: n=20, promedio=2.001 V, minimo=1.99 V, maximo=2.01 V
+ADS3202 CH1 CYCRMS: n=20, promedio=707.805 mV, minimo=703.599 mV, maximo=710.414 mV
+ADS3202 CH2 FREQ: n=20, promedio=2.499 kHz, minimo=2.491 kHz, maximo=2.508 kHz
+ADS3202 CH2 PKPK: n=20, promedio=799.803 mV, minimo=796.107 mV, maximo=803.44 mV
+ADS3202 CH2 CYCRMS: n=20, promedio=282.961 mV, minimo=281.512 mV, maximo=284.166 mV
+
+Verificaciones:
+CH1: OK (Vrms medido 704.661 mV, teorico 709.889 mV)
+CH2: OK (Vrms medido 282.16 mV, teorico 284.018 mV)
+```

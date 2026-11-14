@@ -1,7 +1,6 @@
 import importlib
 from pathlib import Path
 
-
 # Reutiliza las funciones implementadas en los ejercicios anteriores.
 con_unidad = importlib.import_module("02_magnitudes").con_unidad
 Instrumento = importlib.import_module("05_cliente").Instrumento
@@ -20,14 +19,10 @@ def armar_informe(idn, series, verificaciones):
             f"(serie {idn['serie']}, version {idn['version']})"
         ),
         "",
-        "Series del log:"
+        "Series del log:",
     ]
 
-    unidades = {
-        "FREQ": "Hz",
-        "PKPK": "V",
-        "CYCRMS": "V"
-    }
+    unidades = {"FREQ": "Hz", "PKPK": "V", "CYCRMS": "V"}
 
     for (equipo, canal, magnitud), valores in series.items():
         estadistica = resumen(valores)
@@ -74,8 +69,7 @@ def main():
 
         mediciones = barrer(instrumento, ["CH1", "CH2"])
         verificaciones = [
-            verificar_canal(mediciones, canal)
-            for canal in ("CH1", "CH2")
+            verificar_canal(mediciones, canal) for canal in ("CH1", "CH2")
         ]
     finally:
         instrumento.cerrar()

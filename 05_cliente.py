@@ -35,15 +35,20 @@ class Instrumento:
 
             # Si no llega más datos (conexión cerrada por el servidor o error de red)
             if not byte_data:
-                return parsear(respuesta)
+                respuesta = respuesta.rstrip("\n")
+                if comando.strip() == "*IDN?":
+                    return parsear(respuesta)
+                return respuesta
 
             texto_nuevo = byte_data.decode("utf-8")
             respuesta += texto_nuevo
 
             # Verificamos si recibimos el salto de línea que marca el fin del mensaje
             if respuesta.endswith("\n"):
-                # Devolvemos la respuesta completa sin el último "\n" para mayor limpieza
-                return parsear(respuesta.rstrip("\n"))
+                respuesta = respuesta.rstrip("\n")
+                if comando.strip() == "*IDN?":
+                    return parsear(respuesta)
+                return respuesta
 
             # Si no termina en \n, el bucle continúa esperando más datos
 

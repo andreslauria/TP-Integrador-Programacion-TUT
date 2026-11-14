@@ -58,4 +58,5 @@ assert resultado["desvio"] == 1.0
 assert fuera_de_rango([0, 1, 2, 3, 4], 1, 3) == [0, 4]
 
 # Informa que todas las pruebas terminaron correctamente.
-print("pruebas OK")
+if __name__ == "__main__":
+    print("pruebas OK")

@@ -1,3 +1,6 @@
+import math
+
+
 # definimos la funcion
 def analizar_linea(linea):
     # Quitamos espacios al principio y al final
@@ -45,6 +48,9 @@ def analizar_linea(linea):
     except ValueError:
         return None, "Valor no numérico"
 
+    if not math.isfinite(valor):
+        return None, "Valor no finito"
+
     # Guardamos los datos de la medición
     medicion = {
         "fecha": fecha,
@@ -52,10 +58,11 @@ def analizar_linea(linea):
         "equipo": equipo,
         "canal": canal,
         "magnitud": magnitud,
-        "valor": valor
+        "valor": valor,
     }
 
     return medicion, None
+
 
 # definimos la segunda funcion
 def leer_log(ruta):
@@ -80,19 +87,13 @@ def leer_log(ruta):
 
             # Si hay un motivo, guardamos la línea rechazada
             if motivo is not None:
-                rechazadas.append({
-                    "numero": numero,
-                    "linea": linea.rstrip("\n"),
-                    "motivo": motivo
-                })
+                rechazadas.append(
+                    {"numero": numero, "linea": linea.rstrip("\n"), "motivo": motivo}
+                )
                 continue
 
             # Creamos una clave para identificar cada serie
-            clave = (
-                medicion["equipo"],
-                medicion["canal"],
-                medicion["magnitud"]
-            )
+            clave = (medicion["equipo"], medicion["canal"], medicion["magnitud"])
 
             # Si la serie todavía no existe, creamos una lista
             if clave not in series:
@@ -105,74 +106,49 @@ def leer_log(ruta):
     return series, rechazadas
 
 
-# ---- pruebas ----
+if __name__ == "__main__":
+    # Prueba 1: línea válida
+    medicion, motivo = analizar_linea("2026-09-08 09:14:02 ADS3202 CH1 FREQ 1000.5")
+    assert medicion["valor"] == 1000.5
+    assert motivo is None
 
-# Prueba 1: línea válida
-medicion, motivo = analizar_linea(
-    "2026-09-08 09:14:02 ADS3202 CH1 FREQ 1000.5"
-)
+    # Prueba 2: hora imposible
+    medicion, motivo = analizar_linea("2026-09-08 25:61:00 ADS3202 CH1 FREQ 1000")
+    assert medicion is None
+    assert motivo == "Hora imposible"
 
-assert medicion["valor"] == 1000.5
-assert motivo is None
+    # Prueba 3: línea vacía
+    medicion, motivo = analizar_linea("")
+    assert medicion is None
+    assert motivo is None
 
+    # Prueba 4: línea con tabulaciones
+    medicion, motivo = analizar_linea("2026-09-08\t09:14:02\tADS3202\tCH1\tPKPK\t2.0")
+    assert medicion["valor"] == 2.0
+    assert motivo is None
 
-# Prueba 2: hora imposible
-medicion, motivo = analizar_linea(
-    "2026-09-08 25:61:00 ADS3202 CH1 FREQ 1000"
-)
+    # Prueba 5: valor que no se puede convertir a número
+    medicion, motivo = analizar_linea("2026-09-08 09:14:02 ADS3202 CH1 FREQ ERROR")
+    assert medicion is None
+    assert motivo == "Valor no numérico"
 
-assert medicion is None
-assert motivo == "Hora imposible"
+    # Prueba 6: los valores no finitos se rechazan.
+    medicion, motivo = analizar_linea("2026-09-08 09:14:02 ADS3202 CH2 CYCRMS NaN")
+    assert medicion is None
+    assert motivo == "Valor no finito"
 
+    # Prueba 7: leer el archivo real de la cátedra
+    series, rechazadas = leer_log("mediciones.log")
+    assert isinstance(series, dict)
+    assert isinstance(rechazadas, list)
+    assert len(series) > 0
+    print("Series encontradas:", len(series))
 
-# Prueba 3: línea vacía
-medicion, motivo = analizar_linea("")
+    series, rechazadas = leer_log("prueba_mediciones.log")
+    assert len(series) == 2
+    assert len(rechazadas) == 1
+    assert rechazadas[0]["numero"] == 3
 
-assert medicion is None
-assert motivo is None
-
-
-# Prueba 4: línea con tabulaciones
-medicion, motivo = analizar_linea(
-    "2026-09-08\t09:14:02\tADS3202\tCH1\tPKPK\t2.0"
-)
-
-assert medicion["valor"] == 2.0
-assert motivo is None
-
-
-# Prueba 5: valor que no se puede convertir a número
-medicion, motivo = analizar_linea(
-    "2026-09-08 09:14:02 ADS3202 CH1 FREQ ERROR"
-)
-
-assert medicion is None
-assert motivo == "Valor no numérico"
-
-
-# Prueba 6: leer el archivo real de la cátedra
-series, rechazadas = leer_log("mediciones.log")
-
-# Comprobamos que las funciones devuelvan los datos esperados
-assert isinstance(series, dict)
-assert isinstance(rechazadas, list)
-
-# Comprobamos que se hayan encontrado mediciones
-assert len(series) > 0
-
-# Mostramos un resumen de los resultados
-print("Series encontradas:", len(series))
-
-
-series, rechazadas = leer_log("prueba_mediciones.log")
-
-assert len(series) == 2
-assert len(rechazadas) == 1
-assert rechazadas[0]["numero"] == 3
-
-
-# Prueba 7: verificar que se agruparon correctamente los valores
-assert series[("ADS3202", "CH1", "PKPK")] == [2.0]
-
-
-print("pruebas OK")
+    # Prueba 8: verificar que se agruparon correctamente los valores
+    assert series[("ADS3202", "CH1", "PKPK")] == [2.0]
+    print("pruebas OK")

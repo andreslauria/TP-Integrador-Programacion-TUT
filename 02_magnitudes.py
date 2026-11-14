@@ -24,7 +24,6 @@ def con_unidad(valor, unidad):
 
     signo = -1 if valor < 0 else 1
     abs_val = abs(valor)
-
     # 1. Encontrar el orden de magnitud inicial
     # Usamos round para evitar problemas de precisión de flotantes en el logaritmo
     # (ej: math.log10(1000) a veces da 2.9999999999999996)
@@ -63,32 +62,29 @@ def con_unidad(valor, unidad):
     return f"{str_val} {prefijo}{unidad}".replace("  ", " ")
 
 
-# 1. Pruebas de a_numero(texto)
-assert a_numero("1.000000E+03") == 1000.0
-assert a_numero("2.500000E+05") == 250000.0
-assert a_numero("7.070000E-01") == 0.707
-assert a_numero("HOLA") is None
-assert a_numero("") is None
+if __name__ == "__main__":
+    # 1. Pruebas de a_numero(texto)
+    assert a_numero("1.000000E+03") == 1000.0
+    assert a_numero("2.500000E+05") == 250000.0
+    assert a_numero("7.070000E-01") == 0.707
+    assert a_numero("HOLA") is None
+    assert a_numero("") is None
 
-# 2. Pruebas de la tabla del ejercicio
-assert con_unidad(1000.0, "Hz") == "1 kHz"
-assert con_unidad(a_numero("2.500000E+03"), "Hz") == "2.5 kHz"
-assert con_unidad(2.0, "V") == "2 V"
-assert con_unidad(0.707, "V") == "707 mV"
+    # 2. Pruebas de la tabla del ejercicio
+    assert con_unidad(1000.0, "Hz") == "1 kHz"
+    assert con_unidad(a_numero("2.500000E+03"), "Hz") == "2.5 kHz"
+    assert con_unidad(2.0, "V") == "2 V"
+    assert con_unidad(0.707, "V") == "707 mV"
+    assert con_unidad(a_numero("Hola"), "V") == "N/A"
+    assert con_unidad(999.9999, "Hz") == "1 kHz"
+    assert con_unidad(0.9999, "A") == "999.9 mA"
 
-assert con_unidad(a_numero("Hola"), "V") == "N/A"
+    # Prefijos en los extremos
+    assert con_unidad(0.000000000003, "F") == "3 pF"
+    assert con_unidad(1500000000.0, "Hz") == "1.5 GHz"
 
-assert con_unidad(999.9999, "Hz") == "1 kHz"
-assert con_unidad(0.9999, "A") == "999.9 mA"
+    # Valores negativos (importante en voltaje)
+    assert con_unidad(-5.0, "V") == "-5 V"
+    assert con_unidad(-0.015, "A") == "-15 mA"
 
-### AGREGADOS POR LA IA
-# 5. Prefijos en los extremos
-assert con_unidad(0.000000000003, "F") == "3 pF"  # Pico
-assert con_unidad(1500000000.0, "Hz") == "1.5 GHz"  # Giga
-
-# 6. Valores negativos (importante en voltaje)
-assert con_unidad(-5.0, "V") == "-5 V"
-assert con_unidad(-0.015, "A") == "-15 mA"
-
-
-print("Todas las pruebas pasaron OK.")
+    print("Todas las pruebas pasaron OK. ¡Éxitos en la defensa!")
