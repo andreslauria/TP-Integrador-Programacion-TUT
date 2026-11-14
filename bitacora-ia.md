@@ -212,6 +212,48 @@ Sin embargo, para asegurar que el servidor entienda el fin del comando, la mejor
 ```
 
 ### Ejercicio 6###
+Escribí
+
+`barrer(instrumento, canales)` , que le pide al instrumento las tres magnitudes de
+cada canal y devuelve una lista de diccionarios, uno por medición, con el canal, la mag‐
+nitud, la unidad, el texto crudo que devolvió el equipo y el valor ya convertido a número.
+
+
+Los comandos son estos, y el ? de cada uno es obligatorio:
+
+`:MEASUrement:CH1:FREQuency?`
+`:MEASUrement:CH1:PKPK?`
+`:MEASUrement:CH1:CYCRms?`
+
+Para CH2 es igual cambiando el número. Con dos canales y tres magnitudes, barrer de‐
+vuelve seis mediciones.
+
+Si el instrumento contesta un error, el valor queda en None pero el texto crudo se
+guarda igual: al que después lea el informe le sirve más saber qué contestó el equipo
+que ver un casillero vacío.
+
+realiza un breve descripcion en cada bloque del codigo
+
+_Que Contesto_:
+
+Voy a revisar cómo están definidos los comandos, la conversión de magnitudes y la interfaz del instrumento para integrar barrer sin alterar el flujo existente.
+El archivo ya contiene el esqueleto de barrer; voy a reutilizar a_numero() del proyecto y ajustar las pruebas para comprobar los seis comandos exactos y conservar la respuesta de error. También dejaré descripciones breves por bloque.
+Implementé barrer(instrumento, canales) en 06_barrido.py. Consulta las tres magnitudes por canal con ?, conserva la respuesta cruda y usa a_numero(); las respuestas no numéricas quedan como None. Agregué descripciones breves por bloque y pruebas con dos canales y una respuesta de error.
+Verifiqué con python .\06_barrido.py y python .\02_magnitudes.py; ambas pruebas pasaron.
+
+
+
+_como lo verificaste_:
+
+se verifica con un archivo de pruebas de clase.
+
+class InstrumentoFalso:
+    # Simula un instrumento real: tiene el mismo método "preguntar" que usaría barrer()
+    def __init__(self, respuesta_fija):
+        self.respuesta_fija = respuesta_fija  # guardamos que va a contestar siempre
+.
+.
+.
 
 
 
@@ -337,4 +379,31 @@ no conservo lo pedido en la forma de calcular el desvio.
 
 
 _como lo verificaste_:
+
+### Ejercicio 10###
+
+_Prompt_:
+
+Escribí 
+`armar_informe(idn, series, verificaciones)` , que devuelve el informe completo
+como una sola cadena de texto: el instrumento identificado, una línea por serie con su `n` ,
+su promedio, su mínimo y su máximo ya con unidades legibles, y el resultado de cada ve‐
+rificación.
+
+Esta función no imprime nada y no abre ningún archivo. Recibe todo por parámetro y
+devuelve texto. El `print` lo hace quien la llama.
+
+Y al final, el programa completo: con el instrumento virtual prendido, `10_informe.py` tiene
+que identificar el equipo, barrer los dos canales, verificarlos, leer el log, y escribir el in‐
+forme en pantalla. Ese es el banco de mediciones terminado.
+
+
+
+_Que Contesto_ y _como verificamos_:
+
+Voy a revisar el informe y sus dependencias para completar el flujo de identificación, barrido, verificación y lectura del log; sin tocar el archivo de barrido que restauraste.
+
+Revisé 10_informe.py: ya incluye armar_informe(idn, series, verificaciones), que devuelve el texto sin imprimir ni abrir archivos. main() identifica el equipo, barre ambos canales, hace las verificaciones, lee mediciones.log e imprime el informe.
+
+Para correr el banco, iniciá python instrumento_virtual.py en una terminal y luego python 10_informe.py en otra. No hice cambios porque el archivo ya cumple lo solicitado.
 
